@@ -40,6 +40,7 @@ interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParams?: string[];
 }
 
 interface SecurityScheme {
@@ -3684,8 +3685,22 @@ class MCPServer {
 
       // Add parameters based on request method
       if (["GET", "DELETE"].includes(method)) {
-        // For GET/DELETE, send params as query string
+        // For GET/DELETE, send params as query string, except the ones the
+        // endpoint reads from the request body (e.g. DELETE with a JSON body)
+        const bodyParams: Record<string, any> = {};
+        for (const key of tool.bodyParams || []) {
+          if (key in requestParams) {
+            bodyParams[key] = requestParams[key];
+            delete requestParams[key];
+          }
+        }
         config.params = { ...(config.params || {}), ...requestParams };
+        if (Object.keys(bodyParams).length > 0) {
+          config.data = bodyParams;
+          if (config.headers) {
+            config.headers["Content-Type"] = "application/json";
+          }
+        }
       } else {
         // For POST/PUT/PATCH, send params as JSON body
         config.data = requestParams;

@@ -1604,6 +1604,10 @@ Use this endpoint to remove specific DNS records from domains.
        * Domain name
        */
       domain: string;
+      /**
+       * Records to delete, matched by name and type
+       */
+      filters: array;
     };
     response: any; // Response structure will depend on the API
   };

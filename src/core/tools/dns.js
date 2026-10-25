@@ -291,12 +291,50 @@ export default [
         "domain": {
           "type": "string",
           "description": "Domain name"
+        },
+        "filters": {
+          "type": "array",
+          "description": "Filter records for deletion",
+          "items": {
+            "type": "object",
+            "description": "filters parameter",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the record"
+              },
+              "type": {
+                "type": "string",
+                "description": "Type of the record",
+                "enum": [
+                  "A",
+                  "AAAA",
+                  "CNAME",
+                  "ALIAS",
+                  "MX",
+                  "TXT",
+                  "NS",
+                  "SOA",
+                  "SRV",
+                  "CAA"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "type"
+            ]
+          }
         }
       },
       "required": [
-        "domain"
+        "domain",
+        "filters"
       ]
     },
+    "bodyParams": [
+      "filters"
+    ],
     "security": [
       {
         "apiToken": []
